@@ -1,67 +1,54 @@
-🚀 AWS EBS Automation Project — gp2 to gp3 Conversion
+# 🚀 AWS EBS Automation Project — gp2 to gp3 Conversion
 
+## 📌 Project Overview
 
-📌 Project Overview
-
-This project automates the conversion of Amazon Elastic Block Store (EBS) volumes from gp2 to gp3 to optimize cost and improve performance using a fully serverless architecture.
+This project automates the conversion of **Amazon Elastic Block Store (EBS)** volumes from **gp2** to **gp3** to optimize cost and improve performance using a fully serverless architecture.
 
 The system uses AWS managed services to automatically detect gp2 volumes, convert them to gp3, log the activity, and send notifications — all without manual intervention.
 
-
 This is a production-style DevOps automation project suitable for:
 
-DevOps Engineers
+* DevOps Engineers
+* Cloud Engineers
+* AWS Beginners
+* System Administrators
+* Portfolio / Resume Projects
 
-Cloud Engineers
+---
 
-AWS Beginners
+# 🎯 Problem Statement
 
-System Administrators
+Many AWS environments still run on **gp2 volumes**, which:
 
-Portfolio / Resume Projects
-
-
-🎯 Problem Statement
-
-Many AWS environments still run on gp2 volumes, which:
-
-Cost more than gp3
-
-Have limited performance tuning
-
-Require manual upgrades
-
-Increase operational overhead
-
+* Cost more than gp3
+* Have limited performance tuning
+* Require manual upgrades
+* Increase operational overhead
 
 Manual conversion is:
 
-Time-consuming
+* Time-consuming
+* Error-prone
+* Not scalable
 
-Error-prone
+---
 
-Not scalable
+# 💡 Solution
 
+This project provides a **fully automated serverless workflow** that:
 
-💡 Solution
+1. Scans AWS for gp2 volumes
+2. Filters volumes using tags
+3. Converts gp2 volumes to gp3
+4. Logs conversion details into DynamoDB
+5. Sends email notifications using SNS
+6. Runs automatically on a schedule
 
-This project provides a fully automated serverless workflow that:
+---
 
-Scans AWS for gp2 volumes
+# 🏗 Architecture
 
-Filters volumes using tags
-
-Converts gp2 volumes to gp3
-
-Logs conversion details into DynamoDB
-
-Sends email notifications using SNS
-
-Runs automatically on a schedule
-
-
-🏗 Architecture
-
+```
 EventBridge (Scheduler)
         │
         ▼
@@ -85,95 +72,59 @@ Step Functions
  ┌────────────────────┐
  │ Send SNS Alert     │
  └────────────────────┘
- 
+```
 
-⚙️ AWS Services Used
+---
 
-Service
+# ⚙️ AWS Services Used
 
-Purpose
+| Service            | Purpose                |
+| ------------------ | ---------------------- |
+| AWS Lambda         | Serverless compute     |
+| AWS Step Functions | Workflow orchestration |
+| Amazon DynamoDB    | Store logs             |
+| Amazon SNS         | Send notifications     |
+| Amazon EventBridge | Schedule automation    |
+| Amazon EC2 / EBS   | Volume management      |
+| Amazon CloudWatch  | Monitoring and logs    |
+| IAM                | Access control         |
 
-AWS Lambda
+---
 
-Serverless compute
+# 🛠 Tech Stack
 
-AWS Step Functions
+* AWS Lambda
+* Python 3.x
+* Boto3
+* AWS Step Functions
+* DynamoDB
+* SNS
+* EventBridge
+* CloudWatch
+* IAM
 
-Workflow orchestration
+---
 
-Amazon DynamoDB
-
-Store logs
-
-Amazon SNS
-
-Send notifications
-
-Amazon EventBridge
-
-Schedule automation
-
-Amazon EC2 / EBS
-
-Volume management
-
-Amazon CloudWatch
-
-Monitoring and logs
-
-IAM
-
-Access control
-
-
-🛠 Tech Stack
-
-AWS Lambda
-
-Python 3.x
-
-Boto3
-
-AWS Step Functions
-
-DynamoDB
-
-SNS
-
-EventBridge
-
-CloudWatch
-
-IAM
-
-
-📋 Prerequisites
+# 📋 Prerequisites
 
 Before starting, ensure you have:
 
-AWS Account
+* AWS Account
+* IAM permissions
+* Python 3.x installed
+* AWS CLI configured
+* Basic understanding of:
 
-IAM permissions
+  * AWS Lambda
+  * Step Functions
+  * DynamoDB
+  * SNS
 
-Python 3.x installed
+---
 
-AWS CLI configured
+# 📂 Project Structure
 
-
-Basic understanding of:
-
-AWS Lambda
-
-Step Functions
-
-DynamoDB
-
-SNS
-
-
-📂 Project Structure
-
-
+```
 aws-ebs-automation/
 │
 ├── filter-volumes/
@@ -194,68 +145,88 @@ aws-ebs-automation/
 │   ├── sns-notification.png
 │
 └── README.md
+```
 
+---
 
-🔧 Step-by-Step Implementation
+# 🔧 Step-by-Step Implementation
 
+---
 
-Step 1 — Create DynamoDB Table
+# Step 1 — Create DynamoDB Table
 
 Table Name:
 
+```
 EBS-Logs
+```
 
 Primary Key:
 
+```
 VolumeId (String)
-
+```
 
 Purpose:
 
 Store logs of converted volumes.
 
-Step 2 — Create SNS Topic
+---
 
+# Step 2 — Create SNS Topic
 
 Topic Name:
 
+```
 EBS-Conversion-Notifications
+```
 
 Create Subscription:
 
+```
 Protocol: Email
+```
 
 Purpose:
 
 Send notification emails after conversion.
 
+---
 
-Step 3 — Create IAM Role for Lambda
+# Step 3 — Create IAM Role for Lambda
 
 Attach permissions:
 
+```
 AmazonEC2FullAccess
 AmazonDynamoDBFullAccess
 AmazonSNSFullAccess
 CloudWatchLogsFullAccess
+```
 
 Recommended for Production:
 
 Use least privilege policies.
 
+---
 
-Step 4 — Create Lambda Function — Filter gp2 Volumes
+# Step 4 — Create Lambda Function — Filter gp2 Volumes
 
 Function Name:
 
+```
 filter-volumes
+```
 
 Runtime:
 
+```
 Python 3.x
+```
 
 Code:
 
+```python
 import boto3
 
 
@@ -283,16 +254,21 @@ def lambda_handler(event, context):
     ]
 
     return volume_ids
-    
+```
 
-Step 5 — Create Lambda Function — Convert Volumes
+---
+
+# Step 5 — Create Lambda Function — Convert Volumes
 
 Function Name:
 
+```
 convert-volume
+```
 
 Code:
 
+```python
 import boto3
 
 
@@ -300,7 +276,6 @@ ec2 = boto3.client('ec2')
 
 
 def lambda_handler(event, context):
-
 
     volume_list = (
         event
@@ -320,16 +295,21 @@ def lambda_handler(event, context):
         results.append(vol_id)
 
     return results
-    
+```
 
-Step 6 — Create Lambda Function — Log to DynamoDB
+---
+
+# Step 6 — Create Lambda Function — Log to DynamoDB
 
 Function Name:
 
+```
 log-to-dynamodb
+```
 
 Code:
 
+```python
 import boto3
 from datetime import datetime
 
@@ -340,7 +320,6 @@ table = dynamodb.Table('EBS-Logs')
 
 
 def lambda_handler(event, context):
-
 
     volume_list = (
         event
@@ -358,16 +337,21 @@ def lambda_handler(event, context):
         )
 
     return volume_list
-    
+```
 
-Step 7 — Create Lambda Function — Send Notification
+---
+
+# Step 7 — Create Lambda Function — Send Notification
 
 Function Name:
 
+```
 send-notification
+```
 
 Code:
 
+```python
 import boto3
 
 
@@ -378,7 +362,6 @@ TOPIC_ARN = "YOUR_SNS_ARN"
 
 
 def lambda_handler(event, context):
-
 
     volume_list = (
         event
@@ -395,10 +378,13 @@ def lambda_handler(event, context):
     )
 
     return "Done"
-    
+```
 
-Step 8 — Create Step Functions State Machine
+---
 
+# Step 8 — Create Step Functions State Machine
+
+```json
 {
   "Comment": "EBS Automation Workflow",
   "StartAt": "FilterVolumes",
@@ -425,152 +411,158 @@ Step 8 — Create Step Functions State Machine
     }
   }
 }
+```
 
+---
 
-Step 9 — Trigger Execution Using EventBridge
+# Step 9 — Trigger Execution Using EventBridge
 
 Create Rule:
 
+```
 EventBridge → Scheduler
+```
 
 Set Target:
 
+```
 Step Functions
+```
 
 Set Frequency:
 
+```
 Daily
+```
 
 Example:
 
+```
 Every day at 02:00 UTC
+```
 
-Step 10 — Testing the Project
+---
+
+# Step 10 — Testing the Project
 
 Start execution manually:
 
+```
 Step Functions → Start Execution
+```
 
 Verify:
 
-Step Functions execution status
+* Step Functions execution status
+* CloudWatch logs
+* DynamoDB records
+* Email notifications
 
-CloudWatch logs
+---
 
-DynamoDB records
+# Step 11 — Verification Checklist
 
-Email notifications
+* Step Functions execution successful
+* DynamoDB contains logs
+* Email notification received
+* Volume type changed to gp3
 
-Step 11 — Verification Checklist
+---
 
-Step Functions execution successful
-
-DynamoDB contains logs
-
-Email notification received
-
-Volume type changed to gp3
-
-📸 Screenshots
+# 📸 Screenshots
 
 Add screenshots here:
 
+```
 screenshots/
+```
 
 Examples:
 
-Step Functions workflow
+* Step Functions workflow
+* DynamoDB logs
+* SNS email notification
+* EventBridge schedule
+* Lambda execution logs
 
-DynamoDB logs
+---
 
-SNS email notification
+# 🚀 Key Features
 
-EventBridge schedule
+* Fully automated workflow
+* Serverless architecture
+* Event-driven scheduling
+* Cost optimization
+* Logging and monitoring
+* Notification system
+* Scalable design
+* Production-ready architecture
 
-Lambda execution logs
+---
 
-🚀 Key Features
-
-Fully automated workflow
-
-Serverless architecture
-
-Event-driven scheduling
-
-Cost optimization
-
-Logging and monitoring
-
-Notification system
-
-Scalable design
-
-Production-ready architecture
-
-📉 Cost Optimization Benefit
+# 📉 Cost Optimization Benefit
 
 Switching from:
 
+```
 gp2 → gp3
+```
 
 Provides:
 
-Up to 20% lower cost
+* Up to 20% lower cost
+* Better performance control
+* Independent IOPS configuration
+* Independent throughput configuration
 
-Better performance control
+---
 
-Independent IOPS configuration
+# 🔐 Security Best Practices
 
-Independent throughput configuration
+* Use least privilege IAM policies
+* Enable CloudWatch logging
+* Use encrypted EBS volumes
+* Store secrets in environment variables
+* Use IAM roles instead of access keys
 
-🔐 Security Best Practices
+---
 
-Use least privilege IAM policies
-
-Enable CloudWatch logging
-
-Use encrypted EBS volumes
-
-Store secrets in environment variables
-
-Use IAM roles instead of access keys
-
-📈 Future Improvements
+# 📈 Future Improvements
 
 You can extend this project with:
 
-Terraform automation
+* Terraform automation
+* CloudFormation template
+* Slack notifications
+* Retry mechanism
+* Dead Letter Queue (DLQ)
+* Monitoring dashboard
+* CI/CD pipeline
+* Multi-region support
 
-CloudFormation template
+---
 
-Slack notifications
+# 🎯 Use Cases
 
-Retry mechanism
+* Cost optimization automation
+* Infrastructure maintenance
+* Cloud governance
+* DevOps automation
+* Enterprise AWS environments
 
-Dead Letter Queue (DLQ)
+---
 
-Monitoring dashboard
+# 👨‍💻 Author
 
-CI/CD pipeline
+Satyam Maurya  
+DevOps Engineer | Cloud Engineer | MERN Stack Developer
 
-Multi-region support
+---
 
-🎯 Use Cases
+# ⭐ If you found this project useful
 
-Cost optimization automation
+Give it a star on GitHub and share it*
 
-Infrastructure maintenance
 
-Cloud governance
 
-DevOps automation
 
-Enterprise AWS environments
-
-👨‍💻 Author
-
-Satyam MauryaDevOps Engineer | Cloud Engineer | MERN Stack Developer
-
-⭐ If you found this project useful
-
-Give it a star on GitHub and share it with others in the DevOps community.

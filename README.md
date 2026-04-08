@@ -1,5 +1,6 @@
 AWS EBS Automation Project
 
+
 📝 Introduction
 
 This project automates the conversion of AWS EBS volumes from gp2 → gp3 to optimize cost and performance.
@@ -57,6 +58,7 @@ Step 5: Create Lambda Function – Convert Volumes
 Function name: convert-volume
 Runtime: Python 3.x
 Code:
+
 import boto3
 
 ec2 = boto3.client('ec2')
@@ -73,8 +75,8 @@ def lambda_handler(event, context):
 Step 6: Create Lambda Function – Log to DynamoDB
 Function name: log-to-dynamodb
 Code:
-import boto3
 
+import boto3
 from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
@@ -85,11 +87,12 @@ def lambda_handler(event, context):
     for vol in volume_list:
         table.put_item(Item={'VolumeId': vol, 'Time': str(datetime.now())})
     return volume_list
-
+    
     
 Step 7: Create Lambda Function – Send Notification via SNS
 Function name: send-notification
 Code:
+
 import boto3
 
 sns = boto3.client('sns')
@@ -104,6 +107,8 @@ def lambda_handler(event, context):
     
 Step 8: Create Step Functions State Machine
 Create workflow in Step Functions:
+
+
 {
   "Comment": "EBS Automation Workflow",
   "StartAt": "FilterVolumes",
